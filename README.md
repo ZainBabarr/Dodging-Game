@@ -4,6 +4,9 @@ Copy and paste code
 - Install pygame module
 - Install random module
 
+Install "GameAssets" zip file
+- Install to "downloads" folder on PC
+
 How to Use
 
 - Start
