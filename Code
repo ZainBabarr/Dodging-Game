@@ -1,0 +1,357 @@
+"""  
+Program: Dodging Game
+Programmer: Zain Babar  
+Date Created: 1/17/2022  
+Description: Enemys move right to left, player must move up or down to avoid enemy. If enemy hits player, game end
+"""  
+
+import pygame, random
+from pygame.locals import *
+
+#Initializing Game  
+pygame.init()  
+
+#Colours  
+black = (0, 0, 0)   
+white = (255, 255, 255)  
+green = (0, 255, 0)  
+red = (255, 0, 0)  
+
+skyBlue = (187, 242, 242)  
+
+btnDarkBlue = (17, 62, 186)   
+btnLightBlue = (147, 175, 250)  
+
+#Fonts  
+smallFont = pygame.font.SysFont('Calibri', 30)  
+bigFont = pygame.font.SysFont('Calibri', 70) 
+howTo = pygame.font.SysFont('Calibri', 30)
+
+#Home Screen  
+startBtn = smallFont.render('Start', True, white)   
+howBtn = smallFont.render('How to Play', True, white)  
+title = bigFont.render('Dodging Game', True, black)  
+
+#How To Play Screen  
+backBtn = smallFont.render('Back', True, white)
+
+s1 = howTo.render('In this game 3 enemys will move to the left', True, black)
+s2 = howTo.render('1 space is open to go through', True, black)
+s3 = howTo.render('The higher you score, the quicker it goes!', True, black)
+s4 = smallFont.render('Use W to go UP', True, red)
+s5 = smallFont.render('Use S to go DOWN', True, red)
+
+#Endgame Screen  
+yes = smallFont.render('Yes', True, green)  
+no = smallFont.render('No', True, red)  
+playAgain = bigFont.render('Play again?', True, black)
+
+#Setting up display  
+winH = 600 
+winW = 800 
+dis = pygame.display.set_mode((winW,winH))
+                             
+pygame.display.set_caption("Dodging Game")  
+screen = 'home' 
+
+#Game setup 
+boX = 700 
+characterY = 205
+characterX = 30
+score = 0
+
+#Image for Enemy
+enemyImage = pygame.image.load(r'C:\Users\"PC Name"\Downloads\GameAssets\enemy.png')
+gameImage = pygame.image.load(r'C:\Users\"PC Name"\Downloads\GameAssets\gameBackground.png') 
+smallEnemy = pygame.image.load(r'C:\Users\"PC Name"\Downloads\GameAssets\\smallEnemy.png') 
+
+#Defining Character and Enemys
+character_rect = Rect(characterX, characterY, 95, 180)
+enemy1 = Rect(boX, 10, 95, 180)
+enemy2 = Rect(boX, 205, 95, 180)
+enemy3 = Rect(boX, 400, 95, 180)
+
+#Game Speed  
+clock = pygame.time.Clock()   
+gameSpeed = 90  
+
+#Set game to running   
+running = True  
+
+while running:
+    
+    #Home Screen  
+    if screen == 'home':  
+        
+        dis.fill(green)  
+        
+        #Getting mouse position  
+        mouse = pygame.mouse.get_pos()   
+        (x,y) = mouse   
+
+        event = pygame.event.poll()  
+
+        #If 'X' is clicked, then quit  
+        if event.type == pygame.QUIT:   
+            running = False  
+
+        #Drawing buttons  
+        
+        #Start game button  
+        if 150 < x <= 300 and 300 <= y <= 430:  
+
+            pygame.draw.rect(dis, btnLightBlue, [150, 300, 150, 130])  
+
+            if event.type == pygame.MOUSEBUTTONDOWN:  
+                screen = 'game'  
+
+        else:   
+            pygame.draw.rect(dis, btnDarkBlue, [150, 300, 150, 130])  
+
+        #How to play button  
+        
+        if 510 < x <= 660 and 300 <= y <= 430:   
+
+            pygame.draw.rect(dis, btnLightBlue, [510, 300, 150, 130])  
+
+            if event.type == pygame.MOUSEBUTTONDOWN:  
+                screen = 'howto'  
+
+        else:   
+            pygame.draw.rect(dis, btnDarkBlue, [510, 300, 150, 130])  
+
+        #Drawing text  
+        dis.blit(startBtn, (195, 350))  
+        dis.blit(howBtn, (513, 350))  
+        dis.blit(title, (190, 40))  
+
+    #How to Play Screen  
+    if screen == 'howto':  
+
+        dis.fill(green)  
+
+        #Getting mouse position  
+        mouse = pygame.mouse.get_pos()   
+        (x,y) = mouse   
+        
+        event = pygame.event.poll()  
+
+        #If 'X' is clicked, then quit  
+        if event.type == pygame.QUIT:   
+            running = False
+     
+        #Drawing buttons  
+
+        #Start game button  
+        if 20 < x <= 140 and 450 <= y <= 570:   
+            pygame.draw.rect(dis, btnLightBlue, [20, 450, 120, 120])  
+
+            if event.type == pygame.MOUSEBUTTONDOWN: 
+                screen = 'home'  
+                
+        else:   
+            pygame.draw.rect(dis, btnDarkBlue, [20, 450, 120, 120])  
+
+        #Drawing text  
+        dis.blit(backBtn, (53, 500))
+        dis.blit(s1, (10, 10))
+        dis.blit(s2, (10, 55))
+        dis.blit(s3, (10, 100))
+        dis.blit(s4, (10, 200))
+        dis.blit(s5, (10, 255))
+        
+        #Drawing diagaram
+        
+        #Drawing box
+        pygame.draw.rect(dis, white, [390, 170, 400, 420])
+        pygame.draw.rect(dis, black, [390, 170, 400, 420], width=2)
+        
+        #Drawing enemys
+        diagramEnemy1 = dis.blit(smallEnemy, [650, 180, 60, 120]) 
+        diagramEnemy2 = dis.blit(smallEnemy, [650, 460, 60, 120]) 
+
+        #Drawing character
+        pygame.draw.rect(dis, red, [400, 320, 60, 120])
+        
+    #Game Screen  
+    if screen == 'game':
+
+        dis.blit(gameImage, (0,0))  
+
+        #Getting mouse position  
+        mouse = pygame.mouse.get_pos()   
+        (x,y) = mouse   
+
+        event = pygame.event.poll()  
+
+        #If 'X' is clicked, then quit  
+        if event.type == pygame.QUIT:   
+            running = False  
+        
+        #Choosing random box
+        if boX == 700: 
+            box = random.randint(1,3) 
+        
+        #Drawing and choosing a random box
+        if box == 1: 
+            
+            #Drawing hitboxes for collision
+            enemy2 = Rect(boX, 205, 95, 180)
+            enemy3 = Rect(boX, 400, 95, 180)
+             
+            #Drawing enemys
+            enemy2 = dis.blit(enemyImage, [boX, 205, 95, 180]) 
+            enemy3 = dis.blit(enemyImage, [boX, 400, 95, 180])
+            
+            #Checking if collision with character
+            collide1 = pygame.Rect.colliderect(character_rect, enemy2)
+            collide2 = pygame.Rect.colliderect(character_rect, enemy3)
+            
+            #If collides, endgame
+            if collide1:
+                screen = 'endgame'
+            if collide2:
+                screen = 'endgame'
+        
+        if box == 2: 
+            
+            #Drawing hitboxes for collision
+            enemy1 = Rect(boX, 10, 95, 180)
+            enemy3 = Rect(boX, 400, 95, 180)
+            
+            #Drawing enemys
+            enemy1 = dis.blit(enemyImage, [boX, 10, 95, 180]) 
+            enemy3 = dis.blit(enemyImage, [boX, 400, 95, 180])
+  
+            #Checking if collision with character
+            collide1 = pygame.Rect.colliderect(character_rect, enemy1)
+            collide2 = pygame.Rect.colliderect(character_rect, enemy3)
+            
+            #If collides, endgame
+            if collide1:
+                screen = 'endgame'
+            if collide2:
+                screen = 'endgame'
+
+        if box == 3: 
+            
+            #Drawing boxes
+            enemy1 = Rect(boX, 10, 95, 180)
+            enemy2 = Rect(boX, 205, 95, 180)
+            
+            #Drawing enemys
+            enemy1 = dis.blit(enemyImage, [boX, 10, 95, 180]) 
+            enemy2 = dis.blit(enemyImage, [boX, 205, 95, 180])
+            
+            #Checking if collision with character
+            collide1 = pygame.Rect.colliderect(character_rect, enemy1)
+            collide2 = pygame.Rect.colliderect(character_rect, enemy2)
+            
+            #If collides, endgame
+            if collide1:
+                screen = 'endgame'
+            if collide2:
+                screen = 'endgame'
+            
+        #Checking if key down 
+        if event.type == pygame.KEYDOWN: 
+
+            #If up arrow is pressed 
+            if (event.key == pygame.K_w) and (characterY == 10): 
+                pass 
+            elif (event.key == pygame.K_w) and (characterY == 400): 
+                characterY = 205 
+            elif (event.key == pygame.K_w) and (characterY == 205): 
+                characterY = 10 
+
+            #If down arrow is pressed 
+            if (event.key == pygame.K_s) and (characterY == 10): 
+                characterY = 205 
+            elif (event.key == pygame.K_s) and (characterY == 400): 
+                pass 
+            elif (event.key == pygame.K_s) and (characterY == 205): 
+                characterY = 400
+
+        #Updating character
+        character_rect = Rect(characterX, characterY, 95, 180)
+        pygame.draw.rect(dis, red, [30, characterY, 95, 180]) 
+        
+        #Increasing speed as score increases 
+        if score < 10: 
+            boX -= 5 
+
+        if score >= 10 and score < 20: 
+            boX -= 7
+
+        if score >= 20 and score < 30:
+            boX -= 9
+        
+        if score >= 30:
+            boX -= 12
+                
+        #Checking if enemys have gone past character, if so +1 score 
+        if boX <= 0: 
+            score += 1 
+            boX = 700
+        
+        #Updating and displaying score
+        curScore = smallFont.render('Score: ' + str(score), True, green)  
+        dis.blit(curScore, (10,10))
+
+    #Endgame Screen  
+    if screen == 'endgame':  
+
+        dis.fill(skyBlue)  
+
+        #Getting mouse position  
+        mouse = pygame.mouse.get_pos()   
+        (x,y) = mouse   
+
+        event = pygame.event.poll()  
+
+        #If 'X' is clicked, then quit  
+        if event.type == pygame.QUIT:   
+            running = False  
+
+        #Drawing buttons  
+
+        #Yes button  
+        if 150 < x <= 300 and 300 <= y <= 430:   
+
+            pygame.draw.rect(dis, btnLightBlue, [150, 300, 150, 130])  
+
+            if event.type == pygame.MOUSEBUTTONDOWN:  
+                characterY = 205 
+                boX = 700 
+                score = 0 
+                screen = 'game'  
+
+        else:   
+            pygame.draw.rect(dis, btnDarkBlue, [150, 300, 150, 130])  
+
+        #No button  
+        if 510 < x <= 660 and 300 <= y <= 430:   
+
+            pygame.draw.rect(dis, btnLightBlue, [510, 300, 150, 130])  
+
+            if event.type == pygame.MOUSEBUTTONDOWN:  
+                characterY = 205 
+                boX = 700 
+                score = 0 
+                screen = 'home'  
+
+        else:   
+            pygame.draw.rect(dis, btnDarkBlue, [510, 300, 150, 130])  
+            
+        #Drawing text  
+        dis.blit(yes, (205, 350))  
+        dis.blit(no, (565, 350)) 
+        dis.blit(playAgain, (210, 120))   
+
+        finalScore = bigFont.render('Your final score was ' + str(score), True, red)  
+        dis.blit(finalScore, (70, 20))  
+
+    clock.tick(gameSpeed)  
+    pygame.display.update()   
+
+pygame.quit()   
